@@ -143,14 +143,10 @@ main()
   build_autoconf 'xz' "$stdarg --enable-shared --disable-static" &&
   build_autoconf 'lzo' "$stdarg --enable-shared --disable-static" &&
   build_autoconf 'lrzip' "$stdarg --enable-shared --disable-static" &&
+  build_autoconf 'libressl' "$stdarg --enable-shared --disable-static" &&
   \
   build_autoconf 'diffutils' "$stdarg" &&
   build_autoconf 'patch' "$stdarg" &&
-  \
-  (disable_parallelism && build_config 'openssl' \
-    "shared no-asm zlib-dynamic --openssldir='$prefix/etc/ssl' $stdarg") &&
-  \
-  builder_remove_static_libraries 'crypto' 'ssl' &&
   \
   build_autoconf 'openssh' \
     "$stdarg --sysconfdir=\"$prefix/etc/ssh\" \
