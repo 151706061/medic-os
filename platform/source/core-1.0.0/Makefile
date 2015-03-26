@@ -81,7 +81,7 @@ build-eudev: build-pv
 
 copy-eudev:
 	@../../scripts/strip-binaries \
-	  "${INITRD_PATH}/lib/udev" "${INITRD_PATH}/sbin/udev"
+	  "${INITRD_PATH}/lib/udev"* "${INITRD_PATH}/sbin/udev"*
 
 clean-eudev:
 	@if [ -h source/eudev ]; then \
@@ -104,8 +104,8 @@ build-sudo: build-pv
 
 copy-sudo:
 	@../../scripts/strip-binaries \
-	  "${INITRD_PATH}/usr/bin" "${INITRD_PATH}/usr/sbin" \
-	  "${INITRD_PATH}/usr/lib/sudo"
+	  "${INITRD_PATH}/usr/lib/sudo" "${INITRD_PATH}/usr/bin/sudo"* \
+	  "${INITRD_PATH}/usr/sbin/visudo"
 
 clean-sudo:
 	@if [ -h source/sudo ]; then \
@@ -321,11 +321,11 @@ copy-compiler-libraries: check-compiler-root
 	@echo -n "Copying required compiler libraries... " && \
 	for lib in ssp gcc_s; do \
 	  cp "${COMPILER_ROOT}/lib/lib$$lib.so"* "${INITRD_PATH}/lib" \
-	    || exit "$$?"
+	    || exit "$$?" \
 	done && \
 	for lib in stdc++; do \
 	  cp "${COMPILER_ROOT}/lib/lib$$lib.so"* "${INITRD_PATH}/usr/lib" \
-	    || exit "$$?"
+	    || exit "$$?" \
 	done && \
 	echo 'done.'
 

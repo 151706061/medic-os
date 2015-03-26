@@ -22,7 +22,7 @@ clean:
 	(cd platform && ${QMAKE} distclean) &>/dev/null && \
 	echo 'done.'
 
-distclean: clean clean-target
+distclean: clean-initrd clean-target clean
 
 delete:
 	@shopt -u xpg_echo && \
@@ -42,8 +42,17 @@ download: reset-time prepare-tree
 # Private targets
 
 clean-target:
-	@cd /srv && \
-	rm -rf software settings storage
+	@shopt -u xpg_echo && \
+	echo -n 'Cleaning target directory... ' && \
+	cd /srv && rm -rf software settings storage && \
+	echo 'done.'
+
+clean-initrd:
+	@shopt -u xpg_echo && \
+	echo -n 'Cleaning initrd... ' && \
+	git clean -qf platform/initrd >/dev/null && \
+	git clean -qf platform/initrd/*/lib >/dev/null && \
+	echo 'done.'
 
 reset-time:
 	@shopt -u xpg_echo && \

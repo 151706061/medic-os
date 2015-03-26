@@ -114,8 +114,8 @@ build-ami-image:
 	export PATH="$$EC2_HOME/bin:$$PATH" && \
 	\
 	case '${PLATFORM}' in \
-	  x64) architecture='x86_64';; \
 	  x86) architecture='i386';; \
+	  x64) architecture='x86_64';; \
 	  *) echo 'Fatal: Unsupported platform' >&2; exit 1 ;; \
 	esac && \
 	\
@@ -187,7 +187,7 @@ copy-compiler-libraries:
 	  'initrd/${PLATFORM}/lib/libgcc_s.so'*; do \
 	  \
 	  chmod +x "$$file" && \
-	  strip --strip-unneeded "$$file" || exit "$$?"; \
+	  strip --strip-unneeded "$$file"; \
 	done && \
 	\
 	echo 'done.'
@@ -214,8 +214,10 @@ build-x86-image-nopae:
 	@if [ '${PLATFORM}' = 'x86' ]; then \
 	  echo 'Building x86 image with PAE disabled...' && \
 	  (cd source && \
-	    ${QMAKE} rebuild-kernel KERNEL_EXTRA='-nopae' && \
-	    ${QMAKE} rebuild-vm-tools-modules) && \
+	    ../scripts/prepend-path '${COMPILER_ROOT}' \
+	      ${QMAKE} rebuild-kernel KERNEL_EXTRA='-nopae' && \
+	    ../scripts/prepend-path '${COMPILER_ROOT}' \
+	      ${QMAKE} rebuild-vm-tools-modules) && \
 	  \
 	  ${QMAKE} build-iso-image ISO_EXTRA='-nopae'; \
 	fi
