@@ -2,12 +2,13 @@
 # Variables
 
 MAKE ?= make
+SHELL := /bin/bash
 QMAKE := ${MAKE} --no-print-directory
 
 
 # Public targets
 
-all: download build
+all: require-root download build
 
 build: reset-time prepare-tree
 	@echo >&2
@@ -16,21 +17,21 @@ build: reset-time prepare-tree
 	  export HOME="`readlink -f ../..`" && \
 	  source ./.profile && ${QMAKE} compile all)
 
-clean:
+clean: require-root
 	@shopt -u xpg_echo && \
 	echo -n 'Cleaning source tree... ' && \
 	(cd platform && ${QMAKE} distclean) &>/dev/null && \
 	echo 'done.'
 
-distclean: clean-initrd clean-target clean
+distclean: require-root clean-initrd clean-target clean
 
-delete:
+delete: require-root
 	@shopt -u xpg_echo && \
 	echo -n 'Deleting downloaded source code... ' && \
 	(cd platform && ${QMAKE} delete-downloaded) && \
 	echo 'done.'
 
-download: reset-time prepare-tree
+download: require-root reset-time prepare-tree
 	@if ! [ -f platform/status/download.finished ]; then \
 	  ${QMAKE} force-download; \
 	fi && \
@@ -40,6 +41,12 @@ download: reset-time prepare-tree
 	fi
 
 # Private targets
+
+require-root:
+	@if [ "`id -u`" -ne 0 ]; then \
+	  echo 'Fatal: You must run this build process as root' >&2; \
+	  exit 1; \
+	fi
 
 clean-target:
 	@shopt -u xpg_echo && \
