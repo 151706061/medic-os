@@ -71,8 +71,11 @@ symlink()
   local icu_target="`readlink icu`" && \
   rm -f icu && ln -sf "$icu_target/source" icu &&
   \
-  local js_target="`readlink js`" && \
-  rm -f js && ln -sf "$js_target/js/src" js
+  local nspr_target="`readlink nspr`" && \
+  rm -f nspr && ln -sf "$nspr_target/nspr" nspr
+  \
+  local js_target="`readlink mozjs`" && \
+  rm -f mozjs && ln -sf "$js_target/js/src" mozjs
 }
 
 apply_patches()
@@ -91,8 +94,6 @@ apply_patches()
     < ../../patches/garden-maker-medic.diff) &&
   (cd icu && patch -s -p2 \
     < ../../../patches/icu-libicudata-linkage.diff) &&
-  (cd js && patch -s -p1 \
-    < ../../../../patches/js-fix-makefile-loop.diff) &&
   (cd maven && patch -s -p1 \
     < ../../patches/maven-preserve-destination.diff) &&
   (cd nodelint && patch -s -p1 \
